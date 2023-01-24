@@ -52,10 +52,10 @@ class RedisCachePool extends AbstractCachePool implements HierarchicalPoolInterf
     protected function fetchObjectFromCache($key)
     {
         if (function_exists('igbinary_unserialize')) {
-            $result = igbinary_unserialize($this->cache->get($this->getHierarchyKey($key)
+            $result = igbinary_unserialize($this->cache->get($this->getHierarchyKey($key)));
         }
         else {
-            $result = unserialize($this->cache->get($this->getHierarchyKey($key)
+            $result = unserialize($this->cache->get($this->getHierarchyKey($key)));
         }
         if (false === $result))) {
             return [false, null, [], null];

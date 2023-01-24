@@ -51,7 +51,13 @@ class RedisCachePool extends AbstractCachePool implements HierarchicalPoolInterf
      */
     protected function fetchObjectFromCache($key)
     {
-        if (false === $result = unserialize($this->cache->get($this->getHierarchyKey($key)))) {
+        if (function_exists('igbinary_unserialize')) {
+            $result = igbinary_unserialize($this->cache->get($this->getHierarchyKey($key)
+        }
+        else {
+            $result = unserialize($this->cache->get($this->getHierarchyKey($key)
+        }
+        if (false === $result))) {
             return [false, null, [], null];
         }
 
@@ -124,7 +130,12 @@ class RedisCachePool extends AbstractCachePool implements HierarchicalPoolInterf
     protected function storeItemInCache(PhpCacheItem $item, $ttl)
     {
         $key  = $this->getHierarchyKey($item->getKey());
-        $data = serialize([true, $item->get(), $item->getTags(), $item->getExpirationTimestamp()]);
+        if (function_exists('igbinary_serialize')) {
+            $data = igbinary_serialize([true, $item->get(), $item->getTags(), $item->getExpirationTimestamp()]);
+        }
+        else {
+            $data = serialize([true, $item->get(), $item->getTags(), $item->getExpirationTimestamp()]);
+        }            
         if ($ttl === null || $ttl === 0) {
             return $this->cache->set($key, $data);
         }
